@@ -1,0 +1,68 @@
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix td: <https://www.w3.org/2019/wot/td#> .
+@prefix wotsec: <https://www.w3.org/2019/wot/security#> .
+@prefix htv: <http://www.w3.org/2011/http#> .
+@prefix hctl: <https://www.w3.org/2019/wot/hypermedia#> .
+@prefix rml: <http://semweb.mmlab.be/ns/rml#> .
+@prefix ql: <http://semweb.mmlab.be/ns/ql#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example.org/ns/#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+# API key in HTTP header
+<#WotWebAPISecurity> a wotsec:APIKeySecurityScheme;
+  wotsec:in "header";
+  wotsec:name "apikey";
+.
+  
+# Access description for HTTP Web API with JSON as data format
+<#WoTWebAPISource> a td:PropertyAffordance;
+  td:hasForm [
+    hctl:hasTarget "http://example.org/trashcans";
+    hctl:forContentType "application/json";
+    hctl:hasOperationType td:readproperty ;
+    htv:methodName "GET";
+    htv:headers ([
+      htv:fieldName "User-Agent";
+      htv:fieldValue "Mapping processor";
+    ]);
+  ];
+.
+    
+# Link security with access description
+<#WoTWebAPI> a td:Thing ;
+  td:hasSecurityConfiguration <#WoTWebAPISecurity>;
+  td:hasPropertyAffordance <#WoTWebAPISource>;
+.
+
+# RML mappings
+<#LogicalSource> a rml:logicalSource;
+  rml:source <#WoT_MQTT_source>; 
+  rml:referenceFormulation ql:JSONPath; rml:iterator "$";
+.
+
+<#TriplesMap> a rr:TriplesMap;
+  rml:logicalSource [
+    rml:source <#WoTWebAPI>;
+    rml:referenceFormulation ql:JSONPath;
+    rml:iterator "$.[*]";
+  ];
+
+  rr:subjectMap [
+    rr:template "http://example.org/trashcan/{id}"
+  ];
+
+  rr:predicateObjectMap [
+   rr:predicate ex:fillingLevel;
+   rr:objectMap [
+     rml:reference "fillingLevel.value";
+   ];
+  ];
+
+  rr:predicateObjectMap [
+    rr:predicate rdf:type;
+    rr:objectMap [
+      rr:constant ex:Trashcan;
+    ];
+  ];
+.
