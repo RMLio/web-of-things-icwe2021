@@ -57,11 +57,11 @@
     rml:iterator "$.[*]";
   ];
   rml:logicalTarget [ a rmlt:LogicalTarget;
-    rml:target <#RDFDumpTarget>;
-    rml:serialization formats:N-Quads;
+    rmlt:target <#RDFDumpTarget>;
+    rmlt:serialization formats:N-Quads;
   ];
   rml:logicalTarget [ a rmlt:LogicalTarget;
-    rml:target <#SPARQLUPDATETarget>;
+    rmlt:target <#SPARQLUPDATETarget>;
   ];
 
   rr:subjectMap [
